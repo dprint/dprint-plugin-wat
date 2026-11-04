@@ -1,0 +1,12 @@
+~~ formatComments: true ~~
+== should add spaces inside comments ==
+(module
+  ;;line comment
+  (;block comment;)
+  (func))
+
+[expect]
+(module
+  ;; line comment
+  (; block comment ;)
+  (func))

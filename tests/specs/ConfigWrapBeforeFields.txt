@@ -1,0 +1,10 @@
+~~ wrapBeforeFields: always ~~
+== should put a single field on its own line ==
+(module
+  (type $s (struct (field i32))))
+
+[expect]
+(module
+  (type $s
+    (struct
+      (field i32))))

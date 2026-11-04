@@ -1,0 +1,11 @@
+~~ lineWidth: 40 ~~
+== should use the line width ==
+(module
+  (func $f (param i32) (param i32) (param i32) (result i32)
+    local.get 0))
+
+[expect]
+(module
+  (func $f
+    (param i32) (param i32) (param i32) (result i32)
+    local.get 0))

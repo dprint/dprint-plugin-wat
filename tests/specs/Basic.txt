@@ -1,0 +1,121 @@
+== should format a simple module ==
+( module
+  ( func   $add ( param  i32 i32 ) ( result i32 )
+    local.get 0   local.get 1
+    i32.add )
+  ( export "add" ( func $add ) ) )
+
+[expect]
+(module
+  (func $add (param i32 i32) (result i32)
+    local.get 0
+    local.get 1
+    i32.add)
+  (export "add" (func $add)))
+
+== should wrap long lines ==
+(module
+  (func $f (param $a i32) (param $b i32) (param $c i32) (param $d i32) (param $e i32) (result i32) (local $x i32) (local $y i32)
+    local.get $a))
+
+[expect]
+(module
+  (func $f
+    (param $a i32) (param $b i32) (param $c i32) (param $d i32) (param $e i32) (result i32)
+    (local $x i32) (local $y i32)
+    local.get $a))
+
+== should format folded instructions ==
+(module
+  (func (result i32)
+    (i32.add (i32.const 1) (i32.mul (i32.const 2) (i32.const 3)))))
+
+[expect]
+(module
+  (func (result i32)
+    (i32.add
+      (i32.const 1)
+      (i32.mul
+        (i32.const 2)
+        (i32.const 3)))))
+
+== should format blocks ==
+(module
+  (func (param i32)
+    block $b
+    local.get 0
+    br_if $b
+    loop $l
+    br $l
+    end
+    end))
+
+[expect]
+(module
+  (func (param i32)
+    block $b
+      local.get 0
+      br_if $b
+      loop $l
+        br $l
+      end
+    end))
+
+== should keep comments ==
+;; leading comment
+(module
+  ;; a func
+  (func   $f (; inline ;) (param i32)) ;; trailing
+  (;
+    block
+  ;)
+  (memory 1))
+
+[expect]
+;; leading comment
+(module
+  ;; a func
+  (func $f (; inline ;) (param i32)) ;; trailing
+  (;
+    block
+  ;)
+  (memory 1))
+
+== should keep ignored fields ==
+(module
+  ;; fmt-ignore
+  (func   $ignored (param   i32))
+  (func   $formatted (param   i32)))
+
+[expect]
+(module
+  ;; fmt-ignore
+  (func   $ignored (param   i32))
+  (func $formatted (param i32)))
+
+== should format multiple modules ==
+( module   $a )
+
+
+( module   $b )
+
+[expect]
+(module $a)
+
+(module $b)
+
+== should format an implicit module ==
+(func   $f)
+(memory   1)
+
+[expect]
+(func $f)
+(memory 1)
+
+== should keep an already formatted file ==
+(module
+  (func $f))
+
+[expect]
+(module
+  (func $f))

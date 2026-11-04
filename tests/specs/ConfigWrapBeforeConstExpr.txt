@@ -1,0 +1,9 @@
+~~ wrapBeforeConstExpr: never ~~
+== should keep the constant expression on the global line ==
+(module
+  (global $g i32
+    i32.const 0))
+
+[expect]
+(module
+  (global $g i32 i32.const 0))

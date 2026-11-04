@@ -1,0 +1,31 @@
+{
+  "name": "@dprint/wat",
+  "version": "0.0.0",
+  "description": "Wasm buffer for dprint-plugin-wat.",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dprint/dprint-plugin-wat.git"
+  },
+  "keywords": [
+    "wat",
+    "wasm",
+    "webassembly",
+    "code",
+    "formatter",
+    "dprint"
+  ],
+  "author": "David Sherret",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dprint/dprint-plugin-wat/issues"
+  },
+  "homepage": "https://github.com/dprint/dprint-plugin-wat#readme",
+  "scripts": {
+    "test": "node index.test.js"
+  },
+  "devDependencies": {
+    "@dprint/formatter": "~0.4.0"
+  }
+}

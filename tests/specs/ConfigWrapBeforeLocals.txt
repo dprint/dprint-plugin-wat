@@ -1,0 +1,11 @@
+~~ wrapBeforeLocals: never ~~
+== should keep the locals on the signature line ==
+(module
+  (func $f (param i32)
+    (local i32)
+    local.get 0))
+
+[expect]
+(module
+  (func $f (param i32) (local i32)
+    local.get 0))

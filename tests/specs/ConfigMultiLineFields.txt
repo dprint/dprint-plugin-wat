@@ -1,0 +1,10 @@
+~~ multiLineFields: never ~~
+== should keep the fields on one line ==
+(module
+  (type $s (struct (field $a i32) (field $b i64))))
+
+[expect]
+(module
+  (type $s
+    (struct
+      (field $a i32) (field $b i64))))

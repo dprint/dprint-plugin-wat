@@ -1,0 +1,14 @@
+~~ ignoreCommentDirective: dprint-ignore ~~
+== should use the directive ==
+(module
+  ;; dprint-ignore
+  (func   $ignored)
+  ;; fmt-ignore
+  (func   $formatted))
+
+[expect]
+(module
+  ;; dprint-ignore
+  (func   $ignored)
+  ;; fmt-ignore
+  (func $formatted))

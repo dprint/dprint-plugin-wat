@@ -1,0 +1,13 @@
+~~ multiLineLocals: always ~~
+== should put each local on its own line ==
+(module
+  (func $f
+    (local i32) (local i64)
+    local.get 0))
+
+[expect]
+(module
+  (func $f
+    (local i32)
+    (local i64)
+    local.get 0))

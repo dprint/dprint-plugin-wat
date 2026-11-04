@@ -1,0 +1,12 @@
+~~ useTabs: true ~~
+== should indent with tabs ==
+(module
+  (func $f
+    (local i32)
+    local.get 0))
+
+[expect]
+(module
+	(func $f
+		(local i32)
+		local.get 0))

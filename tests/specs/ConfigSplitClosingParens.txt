@@ -1,0 +1,14 @@
+~~ splitClosingParens: true ~~
+== should put closing parens on their own lines ==
+(module
+  (func $f (param i32)
+    local.get 0
+    drop))
+
+[expect]
+(module
+  (func $f (param i32)
+    local.get 0
+    drop
+  )
+)

@@ -1,0 +1,148 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://plugins.dprint.dev/dprint/dprint-plugin-wat/0.0.0/schema.json",
+  "type": "object",
+  "properties": {
+    "lineWidth": {
+      "description": "The width of a line the formatter will try to stay under. Note that this limit will be exceeded in some cases.",
+      "default": 80,
+      "type": "number"
+    },
+    "useTabs": {
+      "description": "Whether to indent with tabs instead of spaces.",
+      "default": false,
+      "type": "boolean"
+    },
+    "indentWidth": {
+      "description": "The number of spaces for an indent. With tabs, this is the width of a tab when deciding where to wrap lines.",
+      "default": 2,
+      "type": "number"
+    },
+    "newLineKind": {
+      "description": "The kind of newline to use.",
+      "type": "string",
+      "default": "lf",
+      "oneOf": [{
+        "const": "auto",
+        "description": "For each file, uses the newline kind found at the end of the last line."
+      }, {
+        "const": "crlf",
+        "description": "Uses carriage return, line feed."
+      }, {
+        "const": "lf",
+        "description": "Uses line feed."
+      }]
+    },
+    "splitClosingParens": {
+      "description": "Whether to put the closing parentheses of a multi-line list on their own line.",
+      "default": false,
+      "type": "boolean"
+    },
+    "wrapBeforeLocals": {
+      "description": "When to put a line break before the locals of a function.",
+      "type": "string",
+      "default": "always",
+      "oneOf": [{
+        "const": "never",
+        "description": "Never."
+      }, {
+        "const": "overflow",
+        "description": "When they don't fit on the line."
+      }, {
+        "const": "multiOnly",
+        "description": "When there's more than one."
+      }, {
+        "const": "always",
+        "description": "Always."
+      }]
+    },
+    "wrapBeforeFields": {
+      "description": "When to put a line break before the fields of a struct.",
+      "type": "string",
+      "default": "multiOnly",
+      "oneOf": [{
+        "const": "never",
+        "description": "Never."
+      }, {
+        "const": "overflow",
+        "description": "When they don't fit on the line."
+      }, {
+        "const": "multiOnly",
+        "description": "When there's more than one."
+      }, {
+        "const": "always",
+        "description": "Always."
+      }]
+    },
+    "wrapBeforeConstExpr": {
+      "description": "When to put a line break before a constant expression.",
+      "type": "string",
+      "default": "always",
+      "oneOf": [{
+        "const": "never",
+        "description": "Never."
+      }, {
+        "const": "overflow",
+        "description": "When it doesn't fit on the line."
+      }, {
+        "const": "multiOnly",
+        "description": "When there's more than one instruction."
+      }, {
+        "const": "always",
+        "description": "Always."
+      }]
+    },
+    "multiLineLocals": {
+      "description": "How to separate the locals of a function.",
+      "type": "string",
+      "default": "smart",
+      "oneOf": [{
+        "const": "never",
+        "description": "Keeps them on one line."
+      }, {
+        "const": "overflow",
+        "description": "Puts them on separate lines when they don't fit on one."
+      }, {
+        "const": "smart",
+        "description": "Puts them on separate lines when they don't fit on one or when any of them has a name."
+      }, {
+        "const": "wrap",
+        "description": "Fills each line with as many as fit."
+      }, {
+        "const": "always",
+        "description": "Puts each on its own line."
+      }]
+    },
+    "multiLineFields": {
+      "description": "How to separate the fields of a struct.",
+      "type": "string",
+      "default": "smart",
+      "oneOf": [{
+        "const": "never",
+        "description": "Keeps them on one line."
+      }, {
+        "const": "overflow",
+        "description": "Puts them on separate lines when they don't fit on one."
+      }, {
+        "const": "smart",
+        "description": "Puts them on separate lines when they don't fit on one or when any of them has a name."
+      }, {
+        "const": "wrap",
+        "description": "Fills each line with as many as fit."
+      }, {
+        "const": "always",
+        "description": "Puts each on its own line."
+      }]
+    },
+    "formatComments": {
+      "description": "Whether to add a space at the start and end of comments. Comments that already have whitespace there are left as they are either way.",
+      "default": false,
+      "type": "boolean"
+    },
+    "ignoreCommentDirective": {
+      "description": "The text of a line comment that keeps the module or module field after it from being formatted.",
+      "default": "fmt-ignore",
+      "type": "string"
+    }
+  }
+}

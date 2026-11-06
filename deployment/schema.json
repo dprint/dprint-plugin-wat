@@ -2,6 +2,63 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://plugins.dprint.dev/dprint/dprint-plugin-wat/0.0.0/schema.json",
   "type": "object",
+  "x-playground": {
+    "input": [
+      ";; a counter and a sum, exported to the host",
+      "( module",
+      "  (import \"env\" \"log\" (func $log (param i32)))",
+      "  (memory (export \"memory\") 1)",
+      "  (global $counter (mut i32) (i32.const 0))",
+      "",
+      "  (func $increment (export \"increment\") (result i32)",
+      "    global.get $counter   i32.const 1   i32.add",
+      "    global.set $counter",
+      "    global.get $counter )",
+      "",
+      "  (func $sum (export \"sum\") (param $n i32) (result i32) (local $i i32) (local $total i32)",
+      "    (block $done (loop $next",
+      "      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))",
+      "      (local.set $total (i32.add (local.get $total) (local.get $i)))",
+      "      (local.set $i (i32.add (local.get $i) (i32.const 1)))",
+      "      (br $next)))",
+      "      (call $log   (local.get $total))",
+      "    local.get $total)",
+      "    )"
+    ]
+  },
+  "x-sections": [{
+    "title": "General",
+    "description": "The width, indentation, and newlines of the file.",
+    "properties": [
+      "lineWidth",
+      "useTabs",
+      "indentWidth",
+      "newLineKind"
+    ]
+  }, {
+    "title": "Line breaks",
+    "description": "Where lines break before the locals of a function, the fields of a struct, and constant expressions, and where closing parentheses go.",
+    "properties": [
+      "wrapBeforeLocals",
+      "wrapBeforeFields",
+      "wrapBeforeConstExpr",
+      "splitClosingParens"
+    ]
+  }, {
+    "title": "Locals and fields",
+    "description": "How the locals of a function and the fields of a struct are separated.",
+    "properties": [
+      "multiLineLocals",
+      "multiLineFields"
+    ]
+  }, {
+    "title": "Comments",
+    "description": "The spacing of comments and the comment that keeps code from being formatted.",
+    "properties": [
+      "formatComments",
+      "ignoreCommentDirective"
+    ]
+  }],
   "properties": {
     "lineWidth": {
       "description": "The width of a line the formatter will try to stay under. Note that this limit will be exceeded in some cases.",
@@ -11,7 +68,14 @@
     "useTabs": {
       "description": "Whether to indent with tabs instead of spaces.",
       "default": false,
-      "type": "boolean"
+      "type": "boolean",
+      "x-example": {
+        "input": [
+          "(module",
+          "  (func $square (param $x i32) (result i32)",
+          "    (i32.mul (local.get $x) (local.get $x))))"
+        ]
+      }
     },
     "indentWidth": {
       "description": "The number of spaces for an indent. With tabs, this is the width of a tab when deciding where to wrap lines.",
@@ -36,7 +100,16 @@
     "splitClosingParens": {
       "description": "Whether to put the closing parentheses of a multi-line list on their own line.",
       "default": false,
-      "type": "boolean"
+      "type": "boolean",
+      "x-example": {
+        "input": [
+          "(module",
+          "  (func $double (param $x i32) (result i32)",
+          "    local.get $x",
+          "    i32.const 2",
+          "    i32.mul))"
+        ]
+      }
     },
     "wrapBeforeLocals": {
       "description": "When to put a line break before the locals of a function.",
@@ -54,7 +127,17 @@
       }, {
         "const": "always",
         "description": "Always."
-      }]
+      }],
+      "x-example": {
+        "config": { "lineWidth": 50 },
+        "input": [
+          "(module",
+          "  (func $id (param i32) (result i32) (local i32)",
+          "    local.get 0)",
+          "  (func $sum (param $n i32) (result i32) (local $i i32) (local $total i32)",
+          "    local.get $total))"
+        ]
+      }
     },
     "wrapBeforeFields": {
       "description": "When to put a line break before the fields of a struct.",
@@ -72,7 +155,15 @@
       }, {
         "const": "always",
         "description": "Always."
-      }]
+      }],
+      "x-example": {
+        "config": { "lineWidth": 50 },
+        "input": [
+          "(module",
+          "  (type $id (struct (field i32)))",
+          "  (type $point (struct (field $x f64) (field $y f64) (field $z f64))))"
+        ]
+      }
     },
     "wrapBeforeConstExpr": {
       "description": "When to put a line break before a constant expression.",
@@ -90,7 +181,16 @@
       }, {
         "const": "always",
         "description": "Always."
-      }]
+      }],
+      "x-example": {
+        "config": { "lineWidth": 50 },
+        "input": [
+          "(module",
+          "  (global $count (mut i32) (i32.const 0))",
+          "  (global $limit i32 i32.const 10 i32.const 5 i32.add)",
+          "  (global $offset i64 (i64.const 1234567890123456789)))"
+        ]
+      }
     },
     "multiLineLocals": {
       "description": "How to separate the locals of a function.",
@@ -104,14 +204,27 @@
         "description": "Puts them on separate lines when they don't fit on one."
       }, {
         "const": "smart",
-        "description": "Puts them on separate lines when they don't fit on one or when any of them has a name."
+        "description": "Puts them on separate lines when they don't fit on one or when the first one is followed by a line break."
       }, {
         "const": "wrap",
         "description": "Fills each line with as many as fit."
       }, {
         "const": "always",
         "description": "Puts each on its own line."
-      }]
+      }],
+      "x-example": {
+        "config": { "lineWidth": 50 },
+        "input": [
+          "(module",
+          "  (func $sum (local $i i32) (local $total i32)",
+          "    local.get $total)",
+          "  (func $scale (local $x f64)",
+          "    (local $y f64)",
+          "    local.get $x)",
+          "  (func $pixel (local $red i32) (local $green i32) (local $blue i32) (local $alpha i32)",
+          "    local.get $red))"
+        ]
+      }
     },
     "multiLineFields": {
       "description": "How to separate the fields of a struct.",
@@ -125,19 +238,39 @@
         "description": "Puts them on separate lines when they don't fit on one."
       }, {
         "const": "smart",
-        "description": "Puts them on separate lines when they don't fit on one or when any of them has a name."
+        "description": "Puts them on separate lines when they don't fit on one or when the first one is followed by a line break."
       }, {
         "const": "wrap",
         "description": "Fills each line with as many as fit."
       }, {
         "const": "always",
         "description": "Puts each on its own line."
-      }]
+      }],
+      "x-example": {
+        "config": { "lineWidth": 50 },
+        "input": [
+          "(module",
+          "  (type $point (struct (field $x f64) (field $y f64)))",
+          "  (type $account (struct (field $id i64)",
+          "    (field $balance (mut f64))))",
+          "  (type $color (struct (field $red i8) (field $green i8) (field $blue i8) (field $alpha i8))))"
+        ]
+      }
     },
     "formatComments": {
       "description": "Whether to add a space at the start and end of comments. Comments that already have whitespace there are left as they are either way.",
       "default": false,
-      "type": "boolean"
+      "type": "boolean",
+      "x-example": {
+        "input": [
+          "(module",
+          "  ;;adds two numbers",
+          "  (func $add (param i32 i32) (result i32)",
+          "    (; the first ;) local.get 0",
+          "    local.get 1",
+          "    i32.add))"
+        ]
+      }
     },
     "ignoreCommentDirective": {
       "description": "The text of a line comment that keeps the module or module field after it from being formatted.",

@@ -2,7 +2,7 @@
  * This script checks for any wat_formatter updates and then
  * automatically publishes a new version of the plugin if so.
  */
-import { $, CargoToml, semver } from "automation";
+import { $, CargoToml, getLatestCrateVersion, semver } from "automation";
 import { aiFixWatFormatterUpdate } from "./ai_fix.ts";
 
 const crateName = "wat_formatter";
@@ -13,7 +13,9 @@ const cargoToml = new CargoToml(rootDirPath.join("Cargo.toml"));
 const currentVersion = getWatFormatterCargoTomlVersion(cargoToml.text());
 
 $.logStep("Getting latest version...");
-const latestVersion = await getLatestWatFormatterVersion();
+const latestCrate = await getLatestCrateVersion(crateName);
+const latestVersion = latestCrate.version;
+$.logLight(`Latest ${crateName} version on crates.io:`, latestVersion);
 if (semver.compare(semver.parse(currentVersion), semver.parse(latestVersion)) >= 0) {
   $.log("No new update found. Exiting.");
   Deno.exit(0);
@@ -21,7 +23,7 @@ if (semver.compare(semver.parse(currentVersion), semver.parse(latestVersion)) >=
 
 $.log(`Found new version: ${currentVersion} -> ${latestVersion}`);
 $.logStep("Updating rust-toolchain.toml...");
-await updateRustToolchain(latestVersion);
+await updateRustToolchain(latestVersion, latestCrate.rustVersion);
 $.logStep("Updating Cargo.toml...");
 const isPatchBump = semver.parse(currentVersion).major === semver.parse(latestVersion).major
   && semver.parse(currentVersion).minor === semver.parse(latestVersion).minor;
@@ -135,19 +137,7 @@ function getWatFormatterCargoTomlVersion(text: string) {
   return version;
 }
 
-async function getLatestWatFormatterVersion() {
-  const data = await getCrateData(`https://crates.io/api/v1/crates/${crateName}`);
-  const version = data.crate?.max_stable_version;
-  if (version == null) {
-    throw new Error(`Could not find latest version of ${crateName} on crates.io.`);
-  }
-  $.logLight(`Latest ${crateName} version on crates.io:`, version);
-  return version;
-}
-
-async function updateRustToolchain(watFormatterVersion: string) {
-  const data = await getCrateData(`https://crates.io/api/v1/crates/${crateName}/${watFormatterVersion}`);
-  const requiredRustVersion = data.version?.rust_version;
+async function updateRustToolchain(watFormatterVersion: string, requiredRustVersion: string | undefined) {
   if (requiredRustVersion == null) {
     $.log(`${crateName} ${watFormatterVersion} does not declare a rust_version; leaving rust-toolchain.toml alone.`);
     return;
@@ -174,13 +164,4 @@ async function updateRustToolchain(watFormatterVersion: string) {
       } already satisfies ${crateName} ${watFormatterVersion} (needs >= ${requiredRustVersion}).`,
     );
   }
-}
-
-function getCrateData(url: string) {
-  return $.request(url)
-    .header("User-Agent", "dprint-plugin-wat update script")
-    .json<{
-      crate?: { max_stable_version?: string };
-      version?: { rust_version?: string | null };
-    }>();
 }
